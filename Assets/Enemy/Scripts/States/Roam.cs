@@ -54,7 +54,8 @@ public class Roam : IState {
 	private async void WaitToRoamAgain() {
 		_canRoam = false;
 
-		await Task.Delay(Random.Range(ROAM_WAIT_TIME_MIN_MAX[0], ROAM_WAIT_TIME_MIN_MAX[1]) * 1000);
+		for (int i = 0; i < Random.Range(ROAM_WAIT_TIME_MIN_MAX[0], ROAM_WAIT_TIME_MIN_MAX[1]) * 100; i++)
+			await Task.Yield();
 
 		_canRoam = true;
 	}
