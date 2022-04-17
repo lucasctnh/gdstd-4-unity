@@ -1,34 +1,39 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
 public class EnemyController : MonoBehaviour {
-
 	[SerializeField] private float _lookRadius = 10f;
 	[SerializeField] private float _minDistanceRadius = 1f;
-	[SerializeField] private Transform _target;
 
-	private NavMeshAgent _agent;
+    private StateMachine _stateMachine;
+	private NavMeshAgent _navMeshAgent;
 	private Animator _animator;
 
-	private void Start() {
-		_agent = GetComponent<NavMeshAgent>();
+	private void Awake() {
 		_animator = GetComponent<Animator>();
+		_navMeshAgent = GetComponent<NavMeshAgent>();
+
+        _stateMachine = new StateMachine();
+
+        IState roam = new Roam(this, _navMeshAgent);
+        IState followPlayer = new FollowPlayer(this, _navMeshAgent, _minDistanceRadius);
+
+		void When(Func<bool> condition, IState from, IState to) => _stateMachine.AddTransition(to, from, condition);
+
+		When(PlayerInRange(), roam, followPlayer);
+		When(PlayerNotInRange(), followPlayer, roam);
+
+		_stateMachine.SetState(roam);
+
+		Func<bool> PlayerInRange() => () => Vector3.Distance(Player.Instance.transform.position, transform.position) <= _lookRadius;
+		Func<bool> PlayerNotInRange() => () => !(Vector3.Distance(Player.Instance.transform.position, transform.position) <= _lookRadius);
 	}
 
 	private void Update() {
-		float distance = Vector3.Distance(_target.position, transform.position);
-		if (distance <= _lookRadius) {
-			MoveToTarget();
-			FaceTarget();
-
-			// if (distance <= _agent.stoppingDistance)
-				// Attack target
-		}
-
+		_stateMachine.Tick();
 		SetBlendTreeAnimation();
 	}
 
@@ -38,19 +43,8 @@ public class EnemyController : MonoBehaviour {
 		Gizmos.DrawWireSphere(transform.position, _minDistanceRadius);
 	}
 
-	private void MoveToTarget() {
-		Vector3 direction = (_target.position - transform.position).normalized;
-		_agent.SetDestination(_target.position - (direction * _minDistanceRadius));
-	}
-
 	private void SetBlendTreeAnimation() {
-		_animator.SetFloat("Speed", _agent.velocity.magnitude);
+		_animator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
 		_animator.SetFloat("MotionSpeed", 1f);
-	}
-
-	private void FaceTarget() {
-		Vector3 direction = (_target.position - transform.position).normalized;
-		Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-		transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
 	}
 }
