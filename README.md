@@ -1,6 +1,6 @@
 # Game Dev Study: Prototype 4
 
-I made this prototype primarily for studying game AI, but I also used it to understand a bit more about lightning in Unity.
+I made this prototype primarily for studying game AI, but I also used it to understand a bit more about lighting in Unity.
 
 <p align="center">
   <a href="https://coutinho.codes/portfolio/gamedev/gdstd4" target="_blank"><img alt="Prototype Image" src='gdstd4.png'/></a>
