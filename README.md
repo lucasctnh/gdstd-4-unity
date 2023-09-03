@@ -6,7 +6,7 @@ I made this prototype primarily for studying game AI, but I also used it to unde
   <a href="https://coutinho.codes/portfolio/gamedev/gdstd4" target="_blank"><img alt="Prototype Image" src='gdstd4.png'/></a>
 </p>
 
-If you'd like to know more about the project and the development process, check it's [page on my website](https://lucascoutinho.me/projects/gdstd4).
+If you'd like to know more about the project and the development process, check it's [page on my website](https://lucascoutinho.me/projects/gdstd3).
 
 Made with [Unity](https://unity.com/) & [C#](https://docs.microsoft.com/en-us/dotnet/csharp/).
 
